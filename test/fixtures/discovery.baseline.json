@@ -1,0 +1,571 @@
+{
+  "version": "0.1.0",
+  "devices": {
+    "filtered": {
+      "external_id": "ext:nederlandse-spoorwegen:station:c-ut_t-ic-spr_to-amersfoort-zwolle",
+      "should_poll": false,
+      "params": ["NS_STATION", "NS_TRAIN_TYPES", "NS_DIRECTION"],
+      "features": [
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ut_t-ic-spr_to-amersfoort-zwolle:next",
+          "category": "text",
+          "type": "text",
+          "min": 0,
+          "max": 0,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ut_t-ic-spr_to-amersfoort-zwolle:wait",
+          "category": "duration",
+          "type": "integer",
+          "unit": "minutes",
+          "min": 0,
+          "max": 180,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ut_t-ic-spr_to-amersfoort-zwolle:following",
+          "category": "duration",
+          "type": "integer",
+          "unit": "minutes",
+          "min": 0,
+          "max": 180,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ut_t-ic-spr_to-amersfoort-zwolle:delay",
+          "category": "duration",
+          "type": "integer",
+          "unit": "minutes",
+          "min": 0,
+          "max": 180,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ut_t-ic-spr_to-amersfoort-zwolle:traffic",
+          "category": "text",
+          "type": "text",
+          "min": 0,
+          "max": 0,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ut_t-ic-spr_to-amersfoort-zwolle:disruptions",
+          "category": "counter-sensor",
+          "type": "integer",
+          "min": 0,
+          "max": 20,
+          "read_only": true,
+          "has_feedback": false
+        }
+      ]
+    },
+    "station": {
+      "external_id": "ext:nederlandse-spoorwegen:station:c-ht",
+      "should_poll": false,
+      "params": ["NS_STATION"],
+      "features": [
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ht:next",
+          "category": "text",
+          "type": "text",
+          "min": 0,
+          "max": 0,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ht:wait",
+          "category": "duration",
+          "type": "integer",
+          "unit": "minutes",
+          "min": 0,
+          "max": 180,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ht:following",
+          "category": "duration",
+          "type": "integer",
+          "unit": "minutes",
+          "min": 0,
+          "max": 180,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ht:delay",
+          "category": "duration",
+          "type": "integer",
+          "unit": "minutes",
+          "min": 0,
+          "max": 180,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ht:traffic",
+          "category": "text",
+          "type": "text",
+          "min": 0,
+          "max": 0,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:nederlandse-spoorwegen:station:c-ht:disruptions",
+          "category": "counter-sensor",
+          "type": "integer",
+          "min": 0,
+          "max": 20,
+          "read_only": true,
+          "has_feedback": false
+        }
+      ]
+    }
+  },
+  "manifest": {
+    "actions": [
+      "test_connection",
+      "search_station",
+      "add_station",
+      "remove_station",
+      "list_stations",
+      "diagnostic"
+    ],
+    "config_schema": [
+      {
+        "key": "intro",
+        "type": "section"
+      },
+      {
+        "key": "api_key",
+        "type": "secret"
+      },
+      {
+        "key": "station_1_section",
+        "type": "section"
+      },
+      {
+        "key": "station_1",
+        "type": "string"
+      },
+      {
+        "key": "station_1_type",
+        "type": "string"
+      },
+      {
+        "key": "station_1_direction",
+        "type": "string"
+      },
+      {
+        "key": "station_2_section",
+        "type": "section"
+      },
+      {
+        "key": "station_2",
+        "type": "string"
+      },
+      {
+        "key": "station_2_type",
+        "type": "string"
+      },
+      {
+        "key": "station_2_direction",
+        "type": "string"
+      },
+      {
+        "key": "station_3_section",
+        "type": "section"
+      },
+      {
+        "key": "station_3",
+        "type": "string"
+      },
+      {
+        "key": "station_3_type",
+        "type": "string"
+      },
+      {
+        "key": "station_3_direction",
+        "type": "string"
+      },
+      {
+        "key": "options_section",
+        "type": "section"
+      },
+      {
+        "key": "interval",
+        "type": "select"
+      },
+      {
+        "key": "language",
+        "type": "select"
+      }
+    ],
+    "scene_triggers": [
+      {
+        "key": "departure_soon",
+        "fields": [
+          {
+            "key": "station",
+            "options": []
+          },
+          {
+            "key": "minutes",
+            "options": ["2", "5", "10", "15", "20", "30"]
+          }
+        ],
+        "variables": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "train",
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "type": "string"
+          },
+          {
+            "key": "delay_minutes",
+            "type": "number"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "key": "departure_cancelled",
+        "fields": [
+          {
+            "key": "station",
+            "options": []
+          }
+        ],
+        "variables": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "train",
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "key": "departure_delayed",
+        "fields": [
+          {
+            "key": "station",
+            "options": []
+          },
+          {
+            "key": "minutes",
+            "options": ["5", "10", "15", "30"]
+          }
+        ],
+        "variables": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "train",
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "type": "string"
+          },
+          {
+            "key": "planned_time",
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "type": "string"
+          },
+          {
+            "key": "delay_minutes",
+            "type": "number"
+          },
+          {
+            "key": "platform",
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "key": "platform_changed",
+        "fields": [
+          {
+            "key": "station",
+            "options": []
+          }
+        ],
+        "variables": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "train",
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "type": "string"
+          },
+          {
+            "key": "previous_platform",
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "key": "disruption_started",
+        "fields": [
+          {
+            "key": "station",
+            "options": []
+          },
+          {
+            "key": "kind",
+            "options": ["disruption", "maintenance", "calamity"]
+          }
+        ],
+        "variables": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "type": "string"
+          },
+          {
+            "key": "cause",
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "key": "disruption_ended",
+        "fields": [
+          {
+            "key": "station",
+            "options": []
+          },
+          {
+            "key": "kind",
+            "options": ["disruption", "maintenance", "calamity"]
+          }
+        ],
+        "variables": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      }
+    ],
+    "scene_actions": [
+      {
+        "key": "get_next_departures",
+        "fields": ["station"],
+        "outputs": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "found",
+            "type": "boolean"
+          },
+          {
+            "key": "train",
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "type": "number"
+          },
+          {
+            "key": "time",
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "type": "string"
+          },
+          {
+            "key": "delay_minutes",
+            "type": "number"
+          },
+          {
+            "key": "following_minutes",
+            "type": "number"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "key": "get_station_disruptions",
+        "fields": ["station"],
+        "outputs": [
+          {
+            "key": "station_name",
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "type": "string"
+          },
+          {
+            "key": "state_label",
+            "type": "string"
+          },
+          {
+            "key": "disrupted",
+            "type": "boolean"
+          },
+          {
+            "key": "count",
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "type": "string"
+          }
+        ]
+      }
+    ],
+    "widgets": [
+      {
+        "key": "departures",
+        "settings": ["station", "stations", "station_name", "type", "count"],
+        "options": {}
+      },
+      {
+        "key": "disruptions",
+        "settings": ["stations", "network"],
+        "options": {}
+      }
+    ]
+  }
+}

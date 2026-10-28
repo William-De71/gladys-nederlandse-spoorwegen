@@ -1,0 +1,16 @@
+Gladys Nederlandse Spoorwegen integration
+Copyright 2026 William Deren
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The stations, departures and disruptions come from the official API of NS
+(Nederlandse Spoorwegen), https://apiportal.ns.nl, read with the personal key
+of each user and under the terms of use of the NS API portal. The widgets show
+the source (NS) and the time of each reading.
+
+The files under test/fixtures are reduced answers of the NS API recorded by the
+perron project (https://github.com/ultimatelemon/perron), Copyright (c) 2026
+UltimateLemon, MIT License.
+
+This community integration is not affiliated with, endorsed or sponsored by
+NS (Nederlandse Spoorwegen) or any other railway operator.

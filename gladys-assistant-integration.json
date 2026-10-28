@@ -1,0 +1,1960 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "Nederlandse Spoorwegen",
+  "description": {
+    "en": "Dutch trains (NS): real-time departures, delays, platforms and disruptions.",
+    "fr": "Trains néerlandais (NS) : départs en temps réel, retards, voies et perturbations.",
+    "de": "Niederländische Züge (NS): Echtzeit-Abfahrten, Verspätungen, Gleise, Störungen.",
+    "es": "Trenes neerlandeses (NS): salidas en tiempo real, retrasos, vías e incidencias."
+  },
+  "version": "0.1.0",
+  "docker_image": "ghcr.io/william-de71/gladys-nederlandse-spoorwegen:0.1.0",
+  "gladys_version": ">=5.3.0",
+  "categories": ["transport"],
+  "keywords": [
+    "ns",
+    "nederlandse spoorwegen",
+    "dutch railways",
+    "trein",
+    "vertrektijden",
+    "storingen",
+    "intercity",
+    "sprinter",
+    "netherlands",
+    "nederland"
+  ],
+  "countries": ["NL"],
+  "cover_image": "https://raw.githubusercontent.com/William-De71/gladys-nederlandse-spoorwegen/main/cover.jpg",
+  "transports": ["cloud"],
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "NS API key",
+        "fr": "Clé d’API NS",
+        "de": "NS-API-Schlüssel",
+        "es": "Clave de API de NS"
+      },
+      "description": {
+        "en": "The departures and the disruptions come from the official API of NS, the Dutch railways. It asks for a free personal key: create an account on the NS API portal, subscribe to the \"Ns-App\" product (free), then copy its primary key below. Fill in your stations, save, then press \"Test the connection\".",
+        "fr": "Les départs et les perturbations viennent de l’API officielle de NS, les chemins de fer néerlandais. Elle demande une clé personnelle gratuite : créez un compte sur le portail API de NS, abonnez-vous au produit « Ns-App » (gratuit), puis copiez sa clé primaire ci-dessous. Renseignez vos gares, enregistrez, puis appuyez sur « Tester la connexion ».",
+        "de": "Die Abfahrten und Störungen stammen aus der offiziellen API von NS, der niederländischen Bahn. Sie verlangt einen kostenlosen persönlichen Schlüssel: Lege ein Konto im NS-API-Portal an, abonniere das Produkt „Ns-App“ (kostenlos) und kopiere dann seinen Primärschlüssel unten hinein. Trage deine Bahnhöfe ein, speichere und drücke dann „Verbindung testen“.",
+        "es": "Las salidas y las incidencias proceden de la API oficial de NS, los ferrocarriles neerlandeses. Pide una clave personal gratuita: crea una cuenta en el portal de API de NS, suscríbete al producto «Ns-App» (gratuito) y copia su clave principal abajo. Indica tus estaciones, guarda y pulsa «Probar la conexión»."
+      },
+      "links": [
+        {
+          "url": "https://apiportal.ns.nl/",
+          "label": {
+            "en": "NS API portal",
+            "fr": "Portail API de NS",
+            "de": "NS-API-Portal",
+            "es": "Portal de API de NS"
+          }
+        },
+        {
+          "url": "https://apiportal.ns.nl/product#product=NsApp",
+          "label": {
+            "en": "The \"Ns-App\" product",
+            "fr": "Le produit « Ns-App »",
+            "de": "Das Produkt „Ns-App“",
+            "es": "El producto «Ns-App»"
+          }
+        }
+      ]
+    },
+    {
+      "key": "api_key",
+      "type": "secret",
+      "label": {
+        "en": "API key",
+        "fr": "Clé d’API",
+        "de": "API-Schlüssel",
+        "es": "Clave de API"
+      },
+      "description": {
+        "en": "The primary key of your \"Ns-App\" subscription (32 characters).",
+        "fr": "La clé primaire de votre abonnement « Ns-App » (32 caractères).",
+        "de": "Der Primärschlüssel deines „Ns-App“-Abonnements (32 Zeichen).",
+        "es": "La clave principal de tu suscripción «Ns-App» (32 caracteres)."
+      },
+      "required": true
+    },
+    {
+      "key": "station_1_section",
+      "type": "section",
+      "label": {
+        "en": "Station 1",
+        "fr": "Gare 1",
+        "de": "Bahnhof 1",
+        "es": "Estación 1"
+      },
+      "description": {
+        "en": "A station where you take the train: its next departures are read in real time, with delay and platform. Type its code (\"UT\", \"ASD\", the codes of the NS boards) or its name (\"Utrecht Centraal\"): the \"Find a station\" button gives them. The train types keep only these trains (\"IC\", \"SPR\", \"IC | ICE\"). The direction keeps only the trains going to, or calling at, these stations (\"Amersfoort | Zwolle\").",
+        "fr": "Une gare où vous prenez le train : ses prochains départs sont lus en temps réel, avec retard et voie. Saisissez son code (« UT », « ASD », les codes des écrans NS) ou son nom (« Utrecht Centraal ») : le bouton « Chercher une gare » les donne. Les types de train ne gardent que ces trains (« IC », « SPR », « IC | ICE »). La direction ne garde que les trains qui vont à ces gares ou s’y arrêtent (« Amersfoort | Zwolle »).",
+        "de": "Ein Bahnhof, an dem du in den Zug steigst: Seine nächsten Abfahrten werden in Echtzeit gelesen, mit Verspätung und Gleis. Gib seinen Code („UT“, „ASD“, die Codes der NS-Anzeigen) oder seinen Namen („Utrecht Centraal“) ein: Die Schaltfläche „Bahnhof suchen“ liefert sie. Die Zuggattungen behalten nur diese Züge („IC“, „SPR“, „IC | ICE“). Die Richtung behält nur die Züge, die zu diesen Bahnhöfen fahren oder dort halten („Amersfoort | Zwolle“).",
+        "es": "Una estación donde tomas el tren: sus próximas salidas se leen en tiempo real, con retraso y vía. Escribe su código («UT», «ASD», los códigos de las pantallas de NS) o su nombre («Utrecht Centraal»): el botón «Buscar una estación» los da. Los tipos de tren solo conservan esos trenes («IC», «SPR», «IC | ICE»). La dirección solo conserva los trenes que van a esas estaciones o paran en ellas («Amersfoort | Zwolle»)."
+      }
+    },
+    {
+      "key": "station_1",
+      "type": "string",
+      "label": {
+        "en": "Station",
+        "fr": "Gare",
+        "de": "Bahnhof",
+        "es": "Estación"
+      },
+      "placeholder": {
+        "en": "UT",
+        "fr": "UT",
+        "de": "UT",
+        "es": "UT"
+      },
+      "required": false
+    },
+    {
+      "key": "station_1_type",
+      "type": "string",
+      "label": {
+        "en": "Train types",
+        "fr": "Types de train",
+        "de": "Zuggattungen",
+        "es": "Tipos de tren"
+      },
+      "description": {
+        "en": "Empty for every train.",
+        "fr": "Vide pour tous les trains.",
+        "de": "Leer für alle Züge.",
+        "es": "Vacío para todos los trenes."
+      },
+      "placeholder": {
+        "en": "IC",
+        "fr": "IC",
+        "de": "IC",
+        "es": "IC"
+      },
+      "required": false
+    },
+    {
+      "key": "station_1_direction",
+      "type": "string",
+      "label": {
+        "en": "Direction",
+        "fr": "Direction",
+        "de": "Richtung",
+        "es": "Dirección"
+      },
+      "description": {
+        "en": "Stations the train goes to or calls at. Empty for every direction.",
+        "fr": "Gares où va le train ou où il s’arrête. Vide pour toutes les directions.",
+        "de": "Bahnhöfe, zu denen der Zug fährt oder an denen er hält. Leer für alle Richtungen.",
+        "es": "Estaciones a las que va el tren o en las que para. Vacío para todas las direcciones."
+      },
+      "placeholder": {
+        "en": "Amersfoort | Zwolle",
+        "fr": "Amersfoort | Zwolle",
+        "de": "Amersfoort | Zwolle",
+        "es": "Amersfoort | Zwolle"
+      },
+      "required": false
+    },
+    {
+      "key": "station_2_section",
+      "type": "section",
+      "label": {
+        "en": "Station 2",
+        "fr": "Gare 2",
+        "de": "Bahnhof 2",
+        "es": "Estación 2"
+      }
+    },
+    {
+      "key": "station_2",
+      "type": "string",
+      "label": {
+        "en": "Station",
+        "fr": "Gare",
+        "de": "Bahnhof",
+        "es": "Estación"
+      },
+      "placeholder": {
+        "en": "Amsterdam Centraal",
+        "fr": "Amsterdam Centraal",
+        "de": "Amsterdam Centraal",
+        "es": "Amsterdam Centraal"
+      },
+      "required": false
+    },
+    {
+      "key": "station_2_type",
+      "type": "string",
+      "label": {
+        "en": "Train types",
+        "fr": "Types de train",
+        "de": "Zuggattungen",
+        "es": "Tipos de tren"
+      },
+      "description": {
+        "en": "Empty for every train.",
+        "fr": "Vide pour tous les trains.",
+        "de": "Leer für alle Züge.",
+        "es": "Vacío para todos los trenes."
+      },
+      "placeholder": {
+        "en": "SPR",
+        "fr": "SPR",
+        "de": "SPR",
+        "es": "SPR"
+      },
+      "required": false
+    },
+    {
+      "key": "station_2_direction",
+      "type": "string",
+      "label": {
+        "en": "Direction",
+        "fr": "Direction",
+        "de": "Richtung",
+        "es": "Dirección"
+      },
+      "description": {
+        "en": "Stations the train goes to or calls at. Empty for every direction.",
+        "fr": "Gares où va le train ou où il s’arrête. Vide pour toutes les directions.",
+        "de": "Bahnhöfe, zu denen der Zug fährt oder an denen er hält. Leer für alle Richtungen.",
+        "es": "Estaciones a las que va el tren o en las que para. Vacío para todas las direcciones."
+      },
+      "placeholder": {
+        "en": "Zandvoort aan Zee",
+        "fr": "Zandvoort aan Zee",
+        "de": "Zandvoort aan Zee",
+        "es": "Zandvoort aan Zee"
+      },
+      "required": false
+    },
+    {
+      "key": "station_3_section",
+      "type": "section",
+      "label": {
+        "en": "Station 3",
+        "fr": "Gare 3",
+        "de": "Bahnhof 3",
+        "es": "Estación 3"
+      }
+    },
+    {
+      "key": "station_3",
+      "type": "string",
+      "label": {
+        "en": "Station",
+        "fr": "Gare",
+        "de": "Bahnhof",
+        "es": "Estación"
+      },
+      "placeholder": {
+        "en": "Schiphol Airport",
+        "fr": "Schiphol Airport",
+        "de": "Schiphol Airport",
+        "es": "Schiphol Airport"
+      },
+      "required": false
+    },
+    {
+      "key": "station_3_type",
+      "type": "string",
+      "label": {
+        "en": "Train types",
+        "fr": "Types de train",
+        "de": "Zuggattungen",
+        "es": "Tipos de tren"
+      },
+      "description": {
+        "en": "Empty for every train.",
+        "fr": "Vide pour tous les trains.",
+        "de": "Leer für alle Züge.",
+        "es": "Vacío para todos los trenes."
+      },
+      "placeholder": {
+        "en": "IC | ICE",
+        "fr": "IC | ICE",
+        "de": "IC | ICE",
+        "es": "IC | ICE"
+      },
+      "required": false
+    },
+    {
+      "key": "station_3_direction",
+      "type": "string",
+      "label": {
+        "en": "Direction",
+        "fr": "Direction",
+        "de": "Richtung",
+        "es": "Dirección"
+      },
+      "description": {
+        "en": "Stations the train goes to or calls at. Empty for every direction.",
+        "fr": "Gares où va le train ou où il s’arrête. Vide pour toutes les directions.",
+        "de": "Bahnhöfe, zu denen der Zug fährt oder an denen er hält. Leer für alle Richtungen.",
+        "es": "Estaciones a las que va el tren o en las que para. Vacío para todas las direcciones."
+      },
+      "placeholder": {
+        "en": "Rotterdam Centraal",
+        "fr": "Rotterdam Centraal",
+        "de": "Rotterdam Centraal",
+        "es": "Rotterdam Centraal"
+      },
+      "required": false
+    },
+    {
+      "key": "options_section",
+      "type": "section",
+      "label": {
+        "en": "Options",
+        "fr": "Options",
+        "de": "Optionen",
+        "es": "Opciones"
+      }
+    },
+    {
+      "key": "interval",
+      "type": "select",
+      "label": {
+        "en": "Reading of the stations",
+        "fr": "Lecture des gares",
+        "de": "Abfrage der Bahnhöfe",
+        "es": "Lectura de las estaciones"
+      },
+      "description": {
+        "en": "How often the departures are read: one request per followed station (NS allows 300 per 5 minutes). While no station announces a train in the next half hour (at night), every 10 minutes. The disruptions are read every 5 minutes.",
+        "fr": "La fréquence de lecture des départs : une requête par gare suivie (NS en autorise 300 par 5 minutes). Tant qu’aucune gare n’annonce de train dans la demi-heure (la nuit), toutes les 10 minutes. Les perturbations sont lues toutes les 5 minutes.",
+        "de": "Wie oft die Abfahrten gelesen werden: eine Anfrage pro verfolgtem Bahnhof (NS erlaubt 300 pro 5 Minuten). Solange kein Bahnhof in der nächsten halben Stunde einen Zug ankündigt (nachts), alle 10 Minuten. Die Störungen werden alle 5 Minuten gelesen.",
+        "es": "Con qué frecuencia se leen las salidas: una petición por estación seguida (NS permite 300 cada 5 minutos). Mientras ninguna estación anuncia un tren en la próxima media hora (de noche), cada 10 minutos. Las incidencias se leen cada 5 minutos."
+      },
+      "options": [
+        {
+          "value": "30",
+          "label": {
+            "en": "Every 30 seconds",
+            "fr": "Toutes les 30 secondes",
+            "de": "Alle 30 Sekunden",
+            "es": "Cada 30 segundos"
+          }
+        },
+        {
+          "value": "60",
+          "label": {
+            "en": "Every minute",
+            "fr": "Toutes les minutes",
+            "de": "Jede Minute",
+            "es": "Cada minuto"
+          }
+        },
+        {
+          "value": "120",
+          "label": {
+            "en": "Every 2 minutes",
+            "fr": "Toutes les 2 minutes",
+            "de": "Alle 2 Minuten",
+            "es": "Cada 2 minutos"
+          }
+        },
+        {
+          "value": "300",
+          "label": {
+            "en": "Every 5 minutes",
+            "fr": "Toutes les 5 minutes",
+            "de": "Alle 5 Minuten",
+            "es": "Cada 5 minutos"
+          }
+        }
+      ],
+      "default": "60",
+      "required": false
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of the texts",
+        "fr": "Langue des textes",
+        "de": "Sprache der Texte",
+        "es": "Idioma de los textos"
+      },
+      "description": {
+        "en": "Names of the devices, summaries and outputs of the scenes. Automatic: the language of your dashboard, as soon as an NS widget has been shown. Station names, messages and disruptions stay in English, as NS writes them.",
+        "fr": "Noms des appareils, résumés et sorties des scènes. Automatique : la langue de votre tableau de bord, dès qu’un widget NS a été affiché. Les noms de gares, les messages et les perturbations restent en anglais, tels que NS les écrit.",
+        "de": "Namen der Geräte, Zusammenfassungen und Ausgaben der Szenen. Automatisch: die Sprache deines Dashboards, sobald ein NS-Widget angezeigt wurde. Bahnhofsnamen, Hinweise und Störungen bleiben auf Englisch, wie NS sie schreibt.",
+        "es": "Nombres de los dispositivos, resúmenes y salidas de las escenas. Automático: el idioma de tu panel, en cuanto se haya mostrado un widget de NS. Los nombres de estaciones, los mensajes y las incidencias quedan en inglés, tal como los escribe NS."
+      },
+      "options": [
+        {
+          "value": "auto",
+          "label": {
+            "en": "Automatic",
+            "fr": "Automatique",
+            "de": "Automatisch",
+            "es": "Automático"
+          }
+        },
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "English",
+            "de": "English",
+            "es": "English"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "Français",
+            "fr": "Français",
+            "de": "Français",
+            "es": "Français"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "Deutsch",
+            "fr": "Deutsch",
+            "de": "Deutsch",
+            "es": "Deutsch"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Español",
+            "fr": "Español",
+            "de": "Español",
+            "es": "Español"
+          }
+        }
+      ],
+      "default": "auto",
+      "required": false
+    }
+  ],
+  "actions": [
+    {
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "description": {
+        "en": "Checks the API key, reads the stations of NS again, finds your stations and reads them right away.",
+        "fr": "Vérifie la clé d’API, relit les gares de NS, retrouve vos gares et les lit tout de suite.",
+        "de": "Prüft den API-Schlüssel, liest die Bahnhöfe von NS neu, findet deine Bahnhöfe und liest sie sofort.",
+        "es": "Comprueba la clave de API, vuelve a leer las estaciones de NS, encuentra tus estaciones y las lee de inmediato."
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "key": "search_station",
+      "label": {
+        "en": "Find a station",
+        "fr": "Chercher une gare",
+        "de": "Bahnhof suchen",
+        "es": "Buscar una estación"
+      },
+      "description": {
+        "en": "Gives the stations holding these words, with their code.",
+        "fr": "Donne les gares contenant ces mots, avec leur code.",
+        "de": "Liefert die Bahnhöfe mit diesen Wörtern, mit ihrem Code.",
+        "es": "Da las estaciones que contienen estas palabras, con su código."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "query",
+          "type": "string",
+          "label": {
+            "en": "Station name",
+            "fr": "Nom de la gare",
+            "de": "Name des Bahnhofs",
+            "es": "Nombre de la estación"
+          },
+          "placeholder": {
+            "en": "den haag",
+            "fr": "den haag",
+            "de": "den haag",
+            "es": "den haag"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "add_station",
+      "label": {
+        "en": "Add a station",
+        "fr": "Ajouter une gare",
+        "de": "Bahnhof hinzufügen",
+        "es": "Añadir una estación"
+      },
+      "description": {
+        "en": "Follows one more station, beyond the three of the form: up to 10 more. Its device is then offered in the Discover tab.",
+        "fr": "Suit une gare de plus, au-delà des trois du formulaire : jusqu’à 10 de plus. Son appareil est ensuite proposé dans l’onglet Découvrir.",
+        "de": "Verfolgt einen weiteren Bahnhof über die drei des Formulars hinaus: bis zu 10 weitere. Sein Gerät wird danach im Tab Entdecken angeboten.",
+        "es": "Sigue una estación más, además de las tres del formulario: hasta 10 más. Su dispositivo se ofrece después en la pestaña Descubrir."
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "station",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "Its code or its name (\"Find a station\").",
+            "fr": "Son code ou son nom (« Chercher une gare »).",
+            "de": "Sein Code oder Name („Bahnhof suchen“).",
+            "es": "Su código o su nombre («Buscar una estación»)."
+          },
+          "placeholder": {
+            "en": "GVC",
+            "fr": "GVC",
+            "de": "GVC",
+            "es": "GVC"
+          },
+          "required": true
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "label": {
+            "en": "Train types",
+            "fr": "Types de train",
+            "de": "Zuggattungen",
+            "es": "Tipos de tren"
+          },
+          "description": {
+            "en": "Empty for every train.",
+            "fr": "Vide pour tous les trains.",
+            "de": "Leer für alle Züge.",
+            "es": "Vacío para todos los trenes."
+          },
+          "placeholder": {
+            "en": "IC",
+            "fr": "IC",
+            "de": "IC",
+            "es": "IC"
+          },
+          "required": false
+        },
+        {
+          "key": "direction",
+          "type": "string",
+          "label": {
+            "en": "Direction",
+            "fr": "Direction",
+            "de": "Richtung",
+            "es": "Dirección"
+          },
+          "description": {
+            "en": "Stations the train goes to or calls at. Empty for every direction.",
+            "fr": "Gares où va le train ou où il s’arrête. Vide pour toutes les directions.",
+            "de": "Bahnhöfe, zu denen der Zug fährt oder an denen er hält. Leer für alle Richtungen.",
+            "es": "Estaciones a las que va el tren o en las que para. Vacío para todas las direcciones."
+          },
+          "placeholder": {
+            "en": "Leiden",
+            "fr": "Leiden",
+            "de": "Leiden",
+            "es": "Leiden"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "remove_station",
+      "label": {
+        "en": "Remove a station",
+        "fr": "Retirer une gare",
+        "de": "Bahnhof entfernen",
+        "es": "Quitar una estación"
+      },
+      "description": {
+        "en": "Stops following a station added with the button. Its device stays in Gladys until you delete it.",
+        "fr": "Arrête de suivre une gare ajoutée avec le bouton. Son appareil reste dans Gladys jusqu’à ce que vous le supprimiez.",
+        "de": "Beendet das Verfolgen eines mit der Schaltfläche hinzugefügten Bahnhofs. Sein Gerät bleibt in Gladys, bis du es löschst.",
+        "es": "Deja de seguir una estación añadida con el botón. Su dispositivo sigue en Gladys hasta que lo borres."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "station",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "Its number in \"List the stations\", or its name.",
+            "fr": "Son numéro dans « Lister les gares », ou son nom.",
+            "de": "Seine Nummer in „Bahnhöfe auflisten“ oder sein Name.",
+            "es": "Su número en «Listar las estaciones», o su nombre."
+          },
+          "placeholder": {
+            "en": "4",
+            "fr": "4",
+            "de": "4",
+            "es": "4"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "list_stations",
+      "label": {
+        "en": "List the stations",
+        "fr": "Lister les gares",
+        "de": "Bahnhöfe auflisten",
+        "es": "Listar las estaciones"
+      },
+      "description": {
+        "en": "Shows every followed station, numbered: the three of the form, then the ones added with the button.",
+        "fr": "Montre toutes les gares suivies, numérotées : les trois du formulaire, puis celles ajoutées avec le bouton.",
+        "de": "Zeigt alle verfolgten Bahnhöfe nummeriert: die drei des Formulars, dann die mit der Schaltfläche hinzugefügten.",
+        "es": "Muestra todas las estaciones seguidas, numeradas: las tres del formulario y luego las añadidas con el botón."
+      },
+      "timeout_seconds": 10
+    },
+    {
+      "key": "diagnostic",
+      "label": {
+        "en": "Diagnostic",
+        "fr": "Diagnostic",
+        "de": "Diagnose",
+        "es": "Diagnóstico"
+      },
+      "description": {
+        "en": "Writes to the Logs tab the stations found, the last trains read, the disruptions, the last errors and the requests made (never the key), for a report on GitHub or the forum.",
+        "fr": "Écrit dans l’onglet Journaux les gares trouvées, les derniers trains lus, les perturbations, les dernières erreurs et les requêtes faites (jamais la clé), pour un signalement sur GitHub ou le forum.",
+        "de": "Schreibt die gefundenen Bahnhöfe, die zuletzt gelesenen Züge, die Störungen, die letzten Fehler und die gestellten Anfragen (nie den Schlüssel) in den Tab Protokolle, für eine Meldung auf GitHub oder im Forum.",
+        "es": "Escribe en la pestaña Registros las estaciones encontradas, los últimos trenes leídos, las incidencias, los últimos errores y las peticiones hechas (nunca la clave), para un informe en GitHub o el foro."
+      },
+      "timeout_seconds": 10
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "departure_soon",
+      "label": {
+        "en": "NS: train leaving soon",
+        "fr": "NS : train bientôt au départ",
+        "de": "NS: Zug fährt bald ab",
+        "es": "NS: tren a punto de salir"
+      },
+      "description": {
+        "en": "A train of a followed station leaves in N minutes, counted on its real-time estimate.",
+        "fr": "Un train d’une gare suivie part dans N minutes, compté sur son heure estimée en temps réel.",
+        "de": "Ein Zug eines verfolgten Bahnhofs fährt in N Minuten ab, gezählt nach der Echtzeit-Schätzung.",
+        "es": "Un tren de una estación seguida sale dentro de N minutos, contado según su estimación en tiempo real."
+      },
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for any station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour n’importe quelle gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für jeden Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para cualquier estación."
+          },
+          "required": false
+        },
+        {
+          "key": "minutes",
+          "type": "select",
+          "label": {
+            "en": "Leaves in",
+            "fr": "Part dans",
+            "de": "Fährt in",
+            "es": "Sale dentro de"
+          },
+          "options": [
+            {
+              "value": "2",
+              "label": {
+                "en": "2 min",
+                "fr": "2 min",
+                "de": "2 min",
+                "es": "2 min"
+              }
+            },
+            {
+              "value": "5",
+              "label": {
+                "en": "5 min",
+                "fr": "5 min",
+                "de": "5 min",
+                "es": "5 min"
+              }
+            },
+            {
+              "value": "10",
+              "label": {
+                "en": "10 min",
+                "fr": "10 min",
+                "de": "10 min",
+                "es": "10 min"
+              }
+            },
+            {
+              "value": "15",
+              "label": {
+                "en": "15 min",
+                "fr": "15 min",
+                "de": "15 min",
+                "es": "15 min"
+              }
+            },
+            {
+              "value": "20",
+              "label": {
+                "en": "20 min",
+                "fr": "20 min",
+                "de": "20 min",
+                "es": "20 min"
+              }
+            },
+            {
+              "value": "30",
+              "label": {
+                "en": "30 min",
+                "fr": "30 min",
+                "de": "30 min",
+                "es": "30 min"
+              }
+            }
+          ],
+          "required": true
+        }
+      ],
+      "variables": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "en": "Train (type and number)",
+            "fr": "Train (type et numéro)",
+            "de": "Zug (Gattung und Nummer)",
+            "es": "Tren (tipo y número)"
+          }
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "label": {
+            "en": "Train type (IC, SPR…)",
+            "fr": "Type de train (IC, SPR…)",
+            "de": "Zuggattung (IC, SPR…)",
+            "es": "Tipo de tren (IC, SPR…)"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "en": "Destination",
+            "fr": "Destination",
+            "de": "Ziel",
+            "es": "Destino"
+          }
+        },
+        {
+          "key": "time",
+          "type": "string",
+          "label": {
+            "en": "Expected time (HH:MM)",
+            "fr": "Heure estimée (HH:MM)",
+            "de": "Erwartete Zeit (HH:MM)",
+            "es": "Hora estimada (HH:MM)"
+          }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "en": "Platform",
+            "fr": "Voie",
+            "de": "Gleis",
+            "es": "Vía"
+          }
+        },
+        {
+          "key": "delay_minutes",
+          "type": "number",
+          "label": {
+            "en": "Delay (min)",
+            "fr": "Retard (min)",
+            "de": "Verspätung (Min.)",
+            "es": "Retraso (min)"
+          },
+          "description": {
+            "en": "0 when on time.",
+            "fr": "0 à l’heure.",
+            "de": "0 bei Pünktlichkeit.",
+            "es": "0 si va a su hora."
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "departure_cancelled",
+      "label": {
+        "en": "NS: train cancelled",
+        "fr": "NS : train supprimé",
+        "de": "NS: Zug fällt aus",
+        "es": "NS: tren suprimido"
+      },
+      "description": {
+        "en": "A train of a followed station leaving in the next two hours is cancelled.",
+        "fr": "Un train d’une gare suivie qui part dans les deux heures est supprimé.",
+        "de": "Ein Zug eines verfolgten Bahnhofs, der in den nächsten zwei Stunden abfährt, fällt aus.",
+        "es": "Un tren de una estación seguida que sale en las próximas dos horas se suprime."
+      },
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for any station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour n’importe quelle gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für jeden Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para cualquier estación."
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "en": "Train (type and number)",
+            "fr": "Train (type et numéro)",
+            "de": "Zug (Gattung und Nummer)",
+            "es": "Tren (tipo y número)"
+          }
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "label": {
+            "en": "Train type (IC, SPR…)",
+            "fr": "Type de train (IC, SPR…)",
+            "de": "Zuggattung (IC, SPR…)",
+            "es": "Tipo de tren (IC, SPR…)"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "en": "Destination",
+            "fr": "Destination",
+            "de": "Ziel",
+            "es": "Destino"
+          }
+        },
+        {
+          "key": "time",
+          "type": "string",
+          "label": {
+            "en": "Planned time (HH:MM)",
+            "fr": "Heure prévue (HH:MM)",
+            "de": "Geplante Zeit (HH:MM)",
+            "es": "Hora prevista (HH:MM)"
+          }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "en": "Platform",
+            "fr": "Voie",
+            "de": "Gleis",
+            "es": "Vía"
+          }
+        },
+        {
+          "key": "message",
+          "type": "string",
+          "label": {
+            "en": "Message of NS",
+            "fr": "Message de NS",
+            "de": "Hinweis von NS",
+            "es": "Mensaje de NS"
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "departure_delayed",
+      "label": {
+        "en": "NS: train delayed",
+        "fr": "NS : train en retard",
+        "de": "NS: Zug verspätet",
+        "es": "NS: tren con retraso"
+      },
+      "description": {
+        "en": "The delay of a train of a followed station leaving in the next two hours reaches 5, 10, 15 or 30 minutes: once per mark, the highest one reached.",
+        "fr": "Le retard d’un train d’une gare suivie qui part dans les deux heures atteint 5, 10, 15 ou 30 minutes : une fois par palier, le plus haut atteint.",
+        "de": "Die Verspätung eines Zuges eines verfolgten Bahnhofs, der in den nächsten zwei Stunden abfährt, erreicht 5, 10, 15 oder 30 Minuten: einmal pro Stufe, die höchste erreichte.",
+        "es": "El retraso de un tren de una estación seguida que sale en las próximas dos horas llega a 5, 10, 15 o 30 minutos: una vez por umbral, el más alto alcanzado."
+      },
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for any station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour n’importe quelle gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für jeden Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para cualquier estación."
+          },
+          "required": false
+        },
+        {
+          "key": "minutes",
+          "type": "multi_select",
+          "label": {
+            "en": "Delay reached",
+            "fr": "Retard atteint",
+            "de": "Erreichte Verspätung",
+            "es": "Retraso alcanzado"
+          },
+          "description": {
+            "en": "Leave empty for any mark. Tick 5, 10, 15 and 30 for any delay of 5 minutes or more.",
+            "fr": "Laissez vide pour tous les paliers. Cochez 5, 10, 15 et 30 pour tout retard de 5 minutes ou plus.",
+            "de": "Leer lassen für jede Stufe. Kreuze 5, 10, 15 und 30 an für jede Verspätung ab 5 Minuten.",
+            "es": "Déjalo vacío para cualquier umbral. Marca 5, 10, 15 y 30 para cualquier retraso de 5 minutos o más."
+          },
+          "options": [
+            {
+              "value": "5",
+              "label": {
+                "en": "5 min",
+                "fr": "5 min",
+                "de": "5 min",
+                "es": "5 min"
+              }
+            },
+            {
+              "value": "10",
+              "label": {
+                "en": "10 min",
+                "fr": "10 min",
+                "de": "10 min",
+                "es": "10 min"
+              }
+            },
+            {
+              "value": "15",
+              "label": {
+                "en": "15 min",
+                "fr": "15 min",
+                "de": "15 min",
+                "es": "15 min"
+              }
+            },
+            {
+              "value": "30",
+              "label": {
+                "en": "30 min",
+                "fr": "30 min",
+                "de": "30 min",
+                "es": "30 min"
+              }
+            }
+          ],
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "en": "Train (type and number)",
+            "fr": "Train (type et numéro)",
+            "de": "Zug (Gattung und Nummer)",
+            "es": "Tren (tipo y número)"
+          }
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "label": {
+            "en": "Train type (IC, SPR…)",
+            "fr": "Type de train (IC, SPR…)",
+            "de": "Zuggattung (IC, SPR…)",
+            "es": "Tipo de tren (IC, SPR…)"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "en": "Destination",
+            "fr": "Destination",
+            "de": "Ziel",
+            "es": "Destino"
+          }
+        },
+        {
+          "key": "planned_time",
+          "type": "string",
+          "label": {
+            "en": "Planned time (HH:MM)",
+            "fr": "Heure prévue (HH:MM)",
+            "de": "Geplante Zeit (HH:MM)",
+            "es": "Hora prevista (HH:MM)"
+          }
+        },
+        {
+          "key": "time",
+          "type": "string",
+          "label": {
+            "en": "Expected time (HH:MM)",
+            "fr": "Heure estimée (HH:MM)",
+            "de": "Erwartete Zeit (HH:MM)",
+            "es": "Hora estimada (HH:MM)"
+          }
+        },
+        {
+          "key": "delay_minutes",
+          "type": "number",
+          "label": {
+            "en": "Delay (min)",
+            "fr": "Retard (min)",
+            "de": "Verspätung (Min.)",
+            "es": "Retraso (min)"
+          }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "en": "Platform",
+            "fr": "Voie",
+            "de": "Gleis",
+            "es": "Vía"
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "platform_changed",
+      "label": {
+        "en": "NS: platform changed",
+        "fr": "NS : changement de voie",
+        "de": "NS: Gleiswechsel",
+        "es": "NS: cambio de vía"
+      },
+      "description": {
+        "en": "A train of a followed station leaving in the next two hours leaves from another platform.",
+        "fr": "Un train d’une gare suivie qui part dans les deux heures part d’une autre voie.",
+        "de": "Ein Zug eines verfolgten Bahnhofs, der in den nächsten zwei Stunden abfährt, fährt von einem anderen Gleis ab.",
+        "es": "Un tren de una estación seguida que sale en las próximas dos horas sale de otra vía."
+      },
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for any station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour n’importe quelle gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für jeden Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para cualquier estación."
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "en": "Train (type and number)",
+            "fr": "Train (type et numéro)",
+            "de": "Zug (Gattung und Nummer)",
+            "es": "Tren (tipo y número)"
+          }
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "label": {
+            "en": "Train type (IC, SPR…)",
+            "fr": "Type de train (IC, SPR…)",
+            "de": "Zuggattung (IC, SPR…)",
+            "es": "Tipo de tren (IC, SPR…)"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "en": "Destination",
+            "fr": "Destination",
+            "de": "Ziel",
+            "es": "Destino"
+          }
+        },
+        {
+          "key": "time",
+          "type": "string",
+          "label": {
+            "en": "Expected time (HH:MM)",
+            "fr": "Heure estimée (HH:MM)",
+            "de": "Erwartete Zeit (HH:MM)",
+            "es": "Hora estimada (HH:MM)"
+          }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "en": "New platform",
+            "fr": "Nouvelle voie",
+            "de": "Neues Gleis",
+            "es": "Nueva vía"
+          }
+        },
+        {
+          "key": "previous_platform",
+          "type": "string",
+          "label": {
+            "en": "Previous platform",
+            "fr": "Voie précédente",
+            "de": "Bisheriges Gleis",
+            "es": "Vía anterior"
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "disruption_started",
+      "label": {
+        "en": "NS: disruption at a station",
+        "fr": "NS : perturbation à une gare",
+        "de": "NS: Störung an einem Bahnhof",
+        "es": "NS: incidencia en una estación"
+      },
+      "description": {
+        "en": "A disruption, engineering works or a calamity about a followed station begins.",
+        "fr": "Une perturbation, des travaux ou une alerte concernant une gare suivie commence.",
+        "de": "Eine Störung, Bauarbeiten oder eine Notlage an einem verfolgten Bahnhof beginnt.",
+        "es": "Empieza una incidencia, unas obras o una alerta que afecta a una estación seguida."
+      },
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for any station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour n’importe quelle gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für jeden Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para cualquier estación."
+          },
+          "required": false
+        },
+        {
+          "key": "kind",
+          "type": "multi_select",
+          "label": {
+            "en": "Kind",
+            "fr": "Type",
+            "de": "Art",
+            "es": "Tipo"
+          },
+          "description": {
+            "en": "Leave empty for every kind.",
+            "fr": "Laissez vide pour tous les types.",
+            "de": "Leer lassen für jede Art.",
+            "es": "Déjalo vacío para todos los tipos."
+          },
+          "options": [
+            {
+              "value": "disruption",
+              "label": {
+                "en": "Disruption",
+                "fr": "Perturbation",
+                "de": "Störung",
+                "es": "Incidencia"
+              }
+            },
+            {
+              "value": "maintenance",
+              "label": {
+                "en": "Engineering works",
+                "fr": "Travaux",
+                "de": "Bauarbeiten",
+                "es": "Obras"
+              }
+            },
+            {
+              "value": "calamity",
+              "label": {
+                "en": "Calamity (storm, strike…)",
+                "fr": "Alerte (tempête, grève…)",
+                "de": "Notlage (Sturm, Streik…)",
+                "es": "Alerta (tormenta, huelga…)"
+              }
+            }
+          ],
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "kind",
+          "type": "string",
+          "label": {
+            "en": "Kind (disruption, maintenance, calamity)",
+            "fr": "Type (disruption, maintenance, calamity)",
+            "de": "Art (disruption, maintenance, calamity)",
+            "es": "Tipo (disruption, maintenance, calamity)"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title (route and consequence)",
+            "fr": "Titre (trajet et conséquence)",
+            "de": "Titel (Strecke und Folge)",
+            "es": "Título (trayecto y consecuencia)"
+          }
+        },
+        {
+          "key": "message",
+          "type": "string",
+          "label": {
+            "en": "Details",
+            "fr": "Détails",
+            "de": "Details",
+            "es": "Detalles"
+          }
+        },
+        {
+          "key": "cause",
+          "type": "string",
+          "label": {
+            "en": "Cause",
+            "fr": "Cause",
+            "de": "Ursache",
+            "es": "Causa"
+          }
+        },
+        {
+          "key": "end",
+          "type": "string",
+          "label": {
+            "en": "Expected end",
+            "fr": "Fin prévue",
+            "de": "Erwartetes Ende",
+            "es": "Fin prevista"
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "disruption_ended",
+      "label": {
+        "en": "NS: disruption over",
+        "fr": "NS : fin de perturbation",
+        "de": "NS: Störung beendet",
+        "es": "NS: fin de incidencia"
+      },
+      "description": {
+        "en": "A disruption, engineering works or a calamity about a followed station is over.",
+        "fr": "Une perturbation, des travaux ou une alerte concernant une gare suivie est terminée.",
+        "de": "Eine Störung, Bauarbeiten oder eine Notlage an einem verfolgten Bahnhof ist beendet.",
+        "es": "Termina una incidencia, unas obras o una alerta que afectaba a una estación seguida."
+      },
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for any station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour n’importe quelle gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für jeden Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para cualquier estación."
+          },
+          "required": false
+        },
+        {
+          "key": "kind",
+          "type": "multi_select",
+          "label": {
+            "en": "Kind",
+            "fr": "Type",
+            "de": "Art",
+            "es": "Tipo"
+          },
+          "description": {
+            "en": "Leave empty for every kind.",
+            "fr": "Laissez vide pour tous les types.",
+            "de": "Leer lassen für jede Art.",
+            "es": "Déjalo vacío para todos los tipos."
+          },
+          "options": [
+            {
+              "value": "disruption",
+              "label": {
+                "en": "Disruption",
+                "fr": "Perturbation",
+                "de": "Störung",
+                "es": "Incidencia"
+              }
+            },
+            {
+              "value": "maintenance",
+              "label": {
+                "en": "Engineering works",
+                "fr": "Travaux",
+                "de": "Bauarbeiten",
+                "es": "Obras"
+              }
+            },
+            {
+              "value": "calamity",
+              "label": {
+                "en": "Calamity (storm, strike…)",
+                "fr": "Alerte (tempête, grève…)",
+                "de": "Notlage (Sturm, Streik…)",
+                "es": "Alerta (tormenta, huelga…)"
+              }
+            }
+          ],
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "kind",
+          "type": "string",
+          "label": {
+            "en": "Kind (disruption, maintenance, calamity)",
+            "fr": "Type (disruption, maintenance, calamity)",
+            "de": "Art (disruption, maintenance, calamity)",
+            "es": "Tipo (disruption, maintenance, calamity)"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title (route and consequence)",
+            "fr": "Titre (trajet et conséquence)",
+            "de": "Titel (Strecke und Folge)",
+            "es": "Título (trayecto y consecuencia)"
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "get_next_departures",
+      "label": {
+        "en": "NS: next trains",
+        "fr": "NS : prochains trains",
+        "de": "NS: nächste Züge",
+        "es": "NS: próximos trenes"
+      },
+      "description": {
+        "en": "The next two trains of a station, the delay and the platform of the first one, and a sentence for a message.",
+        "fr": "Les deux prochains trains d’une gare, le retard et la voie du premier, et une phrase pour un message.",
+        "de": "Die nächsten zwei Züge eines Bahnhofs, Verspätung und Gleis des ersten und ein Satz für eine Nachricht.",
+        "es": "Los dos próximos trenes de una estación, el retraso y la vía del primero, y una frase para un mensaje."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for the first station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour la première gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für den ersten Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para la primera estación."
+          },
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "found",
+          "type": "boolean",
+          "label": {
+            "en": "Train found",
+            "fr": "Train trouvé",
+            "de": "Zug gefunden",
+            "es": "Tren encontrado"
+          }
+        },
+        {
+          "key": "train",
+          "type": "string",
+          "label": {
+            "en": "Train (type and number)",
+            "fr": "Train (type et numéro)",
+            "de": "Zug (Gattung und Nummer)",
+            "es": "Tren (tipo y número)"
+          }
+        },
+        {
+          "key": "destination",
+          "type": "string",
+          "label": {
+            "en": "Destination",
+            "fr": "Destination",
+            "de": "Ziel",
+            "es": "Destino"
+          }
+        },
+        {
+          "key": "minutes",
+          "type": "number",
+          "label": {
+            "en": "Wait (min, -1 if none)",
+            "fr": "Attente (min, -1 si aucun)",
+            "de": "Wartezeit (Min., -1 wenn keiner)",
+            "es": "Espera (min, -1 si no hay)"
+          }
+        },
+        {
+          "key": "time",
+          "type": "string",
+          "label": {
+            "en": "Expected time (HH:MM)",
+            "fr": "Heure estimée (HH:MM)",
+            "de": "Erwartete Zeit (HH:MM)",
+            "es": "Hora estimada (HH:MM)"
+          }
+        },
+        {
+          "key": "platform",
+          "type": "string",
+          "label": {
+            "en": "Platform",
+            "fr": "Voie",
+            "de": "Gleis",
+            "es": "Vía"
+          }
+        },
+        {
+          "key": "delay_minutes",
+          "type": "number",
+          "label": {
+            "en": "Delay (min)",
+            "fr": "Retard (min)",
+            "de": "Verspätung (Min.)",
+            "es": "Retraso (min)"
+          }
+        },
+        {
+          "key": "following_minutes",
+          "type": "number",
+          "label": {
+            "en": "Wait for the following one (min, -1 if none)",
+            "fr": "Attente du suivant (min, -1 si aucun)",
+            "de": "Wartezeit des folgenden (Min., -1 wenn keiner)",
+            "es": "Espera del siguiente (min, -1 si no hay)"
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "get_station_disruptions",
+      "label": {
+        "en": "NS: disruptions of a station",
+        "fr": "NS : perturbations d’une gare",
+        "de": "NS: Störungen eines Bahnhofs",
+        "es": "NS: incidencias de una estación"
+      },
+      "description": {
+        "en": "The state of a station (normal, works, disrupted, major disruption), the disruption under way and a sentence for a message.",
+        "fr": "L’état d’une gare (normal, travaux, perturbé, très perturbé), la perturbation en cours et une phrase pour un message.",
+        "de": "Der Zustand eines Bahnhofs (normal, Bauarbeiten, gestört, große Störung), die laufende Störung und ein Satz für eine Nachricht.",
+        "es": "El estado de una estación (normal, obras, alterado, incidencia grave), la incidencia en curso y una frase para un mensaje."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for the first station.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour la première gare.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für den ersten Bahnhof.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para la primera estación."
+          },
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          }
+        },
+        {
+          "key": "state",
+          "type": "string",
+          "label": {
+            "en": "State (normal, info, disrupted, major)",
+            "fr": "État (normal, info, disrupted, major)",
+            "de": "Zustand (normal, info, disrupted, major)",
+            "es": "Estado (normal, info, disrupted, major)"
+          }
+        },
+        {
+          "key": "state_label",
+          "type": "string",
+          "label": {
+            "en": "State, in words",
+            "fr": "État, en toutes lettres",
+            "de": "Zustand, in Worten",
+            "es": "Estado, en palabras"
+          }
+        },
+        {
+          "key": "disrupted",
+          "type": "boolean",
+          "label": {
+            "en": "Disrupted",
+            "fr": "Perturbé",
+            "de": "Gestört",
+            "es": "Alterado"
+          }
+        },
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Disruptions under way",
+            "fr": "Perturbations en cours",
+            "de": "Laufende Störungen",
+            "es": "Incidencias en curso"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title (route and consequence)",
+            "fr": "Titre (trajet et conséquence)",
+            "de": "Titel (Strecke und Folge)",
+            "es": "Título (trayecto y consecuencia)"
+          }
+        },
+        {
+          "key": "message",
+          "type": "string",
+          "label": {
+            "en": "Details",
+            "fr": "Détails",
+            "de": "Details",
+            "es": "Detalles"
+          }
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary (a sentence for a message)",
+            "fr": "Résumé (une phrase pour un message)",
+            "de": "Zusammenfassung (ein Satz für eine Nachricht)",
+            "es": "Resumen (una frase para un mensaje)"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "departures",
+      "label": {
+        "en": "NS departures",
+        "fr": "Départs NS",
+        "de": "NS-Abfahrten",
+        "es": "Salidas NS"
+      },
+      "description": {
+        "en": "The next trains of a station, with delay and platform.",
+        "fr": "Les prochains trains d’une gare, avec retard et voie.",
+        "de": "Die nächsten Züge eines Bahnhofs, mit Verspätung und Gleis.",
+        "es": "Los próximos trenes de una estación, con retraso y vía."
+      },
+      "icon": "clock",
+      "settings": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Gare",
+            "de": "Bahnhof",
+            "es": "Estación"
+          },
+          "description": {
+            "en": "A station device of the integration. Leave empty for the first station, or when you tick devices in “Several stations” below.",
+            "fr": "Un appareil gare de l’intégration. Laissez vide pour la première gare, ou si vous cochez des appareils dans « Plusieurs gares » ci-dessous.",
+            "de": "Ein Bahnhofs-Gerät der Integration. Leer lassen für den ersten Bahnhof oder wenn du unten unter „Mehrere Bahnhöfe“ Geräte ankreuzt.",
+            "es": "Un dispositivo estación de la integración. Déjalo vacío para la primera estación, o si marcas dispositivos en «Varias estaciones» más abajo."
+          },
+          "required": false
+        },
+        {
+          "key": "stations",
+          "type": "multi_select",
+          "source": "devices",
+          "label": {
+            "en": "Several stations",
+            "fr": "Plusieurs gares",
+            "de": "Mehrere Bahnhöfe",
+            "es": "Varias estaciones"
+          },
+          "description": {
+            "en": "Station devices shown together, instead of the station above. Devices of one station are merged under its name.",
+            "fr": "Des appareils gares affichés ensemble, à la place de la gare ci-dessus. Les appareils d’une même gare sont réunis sous son nom.",
+            "de": "Bahnhofs-Geräte, die zusammen angezeigt werden, statt des Bahnhofs oben. Geräte desselben Bahnhofs werden unter seinem Namen zusammengefasst.",
+            "es": "Dispositivos de estación mostrados juntos, en lugar de la estación de arriba. Los de una misma estación se reúnen bajo su nombre."
+          },
+          "required": false
+        },
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Other station",
+            "fr": "Autre gare",
+            "de": "Anderer Bahnhof",
+            "es": "Otra estación"
+          },
+          "description": {
+            "en": "A station code or name, to show a station that is not followed.",
+            "fr": "Un code ou un nom de gare, pour afficher une gare non suivie.",
+            "de": "Ein Bahnhofscode oder -name, um einen nicht verfolgten Bahnhof anzuzeigen.",
+            "es": "Un código o nombre de estación, para mostrar una estación no seguida."
+          },
+          "placeholder": {
+            "en": "Amersfoort Centraal",
+            "fr": "Amersfoort Centraal",
+            "de": "Amersfoort Centraal",
+            "es": "Amersfoort Centraal"
+          },
+          "required": false
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "label": {
+            "en": "Train types of the other station",
+            "fr": "Types de train de l’autre gare",
+            "de": "Zuggattungen des anderen Bahnhofs",
+            "es": "Tipos de tren de la otra estación"
+          },
+          "placeholder": {
+            "en": "IC | SPR",
+            "fr": "IC | SPR",
+            "de": "IC | SPR",
+            "es": "IC | SPR"
+          },
+          "required": false
+        },
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Trains shown",
+            "fr": "Trains affichés",
+            "de": "Angezeigte Züge",
+            "es": "Trenes mostrados"
+          },
+          "min": 1,
+          "max": 10,
+          "default": 6,
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "disruptions",
+      "label": {
+        "en": "NS disruptions",
+        "fr": "Perturbations NS",
+        "de": "NS-Störungen",
+        "es": "Incidencias NS"
+      },
+      "description": {
+        "en": "The state of your stations, the disruptions and works under way and coming.",
+        "fr": "L’état de vos gares, les perturbations et travaux en cours et à venir.",
+        "de": "Der Zustand deiner Bahnhöfe, laufende und kommende Störungen und Bauarbeiten.",
+        "es": "El estado de tus estaciones, las incidencias y obras en curso y próximas."
+      },
+      "icon": "alert-triangle",
+      "settings": [
+        {
+          "key": "stations",
+          "type": "multi_select",
+          "source": "devices",
+          "label": {
+            "en": "Stations",
+            "fr": "Gares",
+            "de": "Bahnhöfe",
+            "es": "Estaciones"
+          },
+          "description": {
+            "en": "Station devices of the integration. Leave empty for every followed station.",
+            "fr": "Des appareils gares de l’intégration. Laissez vide pour toutes les gares suivies.",
+            "de": "Bahnhofs-Geräte der Integration. Leer lassen für alle verfolgten Bahnhöfe.",
+            "es": "Dispositivos estación de la integración. Déjalo vacío para todas las estaciones seguidas."
+          },
+          "required": false
+        },
+        {
+          "key": "network",
+          "type": "boolean",
+          "label": {
+            "en": "Whole network",
+            "fr": "Tout le réseau",
+            "de": "Ganzes Netz",
+            "es": "Toda la red"
+          },
+          "description": {
+            "en": "The disruptions of the whole Dutch network instead of your stations.",
+            "fr": "Les perturbations de tout le réseau néerlandais au lieu de vos gares.",
+            "de": "Die Störungen des ganzen niederländischen Netzes statt deiner Bahnhöfe.",
+            "es": "Las incidencias de toda la red neerlandesa en lugar de tus estaciones."
+          },
+          "default": false,
+          "required": false
+        }
+      ]
+    }
+  ]
+}
