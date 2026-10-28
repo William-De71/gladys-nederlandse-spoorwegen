@@ -5,7 +5,7 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions
 follow [Semantic Versioning](https://semver.org/). This file is generated at
 each release from the Conventional Commits: do not edit it by hand.
 
-## [0.1.0] - unreleased
+## [0.1.0] - 2026-10-28
 
 ### Added
 
@@ -17,3 +17,5 @@ each release from the Conventional Commits: do not edit it by hand.
 - Configuration actions: test the connection, find a station by name (with its code), add, list and remove stations, and a diagnostic written to the Logs tab (never the key).
 - Cloud transport: the official API of NS with a free personal key (product "Ns-App"); one request per followed station every 30 seconds to 5 minutes, disruptions every 5 minutes, under the 300 requests per 5 minutes NS allows; the stations of NS kept in /data.
 - English, French, German and Spanish everywhere: settings, devices, widgets, scenes and documentation.
+
+[0.1.0]: https://github.com/William-De71/gladys-nederlandse-spoorwegen/releases/tag/v0.1.0
